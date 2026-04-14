@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecuación General de Energía - Mecánica de Fluidos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- 1. CONFIGURACIÓN BASE Y VARIABLES --- */
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #38bdf8;
+            --accent: #06b6d4;
+            --dark-bg: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.90);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --gradient-fluid: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            --gradient-text: linear-gradient(90deg, #0ea5e9, #06b6d4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--gradient-fluid);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Ocultar barra de desplazamiento principal */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        body::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* --- 2. CONTENEDORES DE DIAPOSITIVAS --- */
+        .slide-wrapper {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start;
+            padding: 15px;
+            position: relative;
+        }
+
+        /* Partículas de fondo flotantes simulando burbujas */
+        .slide-wrapper::before, .slide-wrapper::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, rgba(56,189,248,0) 70%);
+            z-index: 0;
+            animation: float 8s infinite ease-in-out;
+        }
+        .slide-wrapper::before { width: 400px; height: 400px; top: 10%; left: 5%; }
+        .slide-wrapper::after { width: 600px; height: 600px; bottom: -10%; right: 5%; animation-delay: -4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .slide-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            
+            /* Ajustes de tamaño para evitar desbordes */
+            height: auto;
+            min-height: 70vh;
+            max-height: 92vh;
+            width: 95vw;
+            max-width: 1200px;
+            padding: 40px 50px; /* Padding reducido */
+            position: relative;
+            z-index: 1;
+            overflow-y: auto; /* Scroll interno seguro si la pantalla es muy pequeña */
+            transition: transform 0.3s ease;
+        }
+
+        /* Scrollbar interno para diapositivas con mucho contenido */
+        .slide-container::-webkit-scrollbar { width: 6px; }
+        .slide-container::-webkit-scrollbar-track { background: transparent; }
+        .slide-container::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.3); border-radius: 10px; }
+
+        /* --- 3. TIPOGRAFÍA Y ESTILOS COMUNES --- */
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; color: #0f172a; }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem); /* Tamaño dinámico ajustado */
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 10px 20px rgba(14, 165, 233, 0.2);
+        }
+
+        .slide-title {
+            font-size: clamp(2rem, 4vw, 2.6rem); /* Reducido */
+            font-weight: 700;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .slide-title::after {
+            content: ''; position: absolute; left: 0; bottom: -8px;
+            height: 4px; width: 60%; background: var(--gradient-text); border-radius: 5px;
+        }
+
+        h3 {
+            font-size: clamp(1.3rem, 2vw, 1.5rem);
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+        }
+
+        p, li {
+            font-size: clamp(0.95rem, 1.5vw, 1.1rem); /* Reducido para evitar montajes */
+            line-height: 1.5; /* Interlineado más compacto pero legible */
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        /* --- 4. DISEÑOS ESPECÍFICOS --- */
+        
+        /* Portada */
+        .title-layout { text-align: center; margin: auto; max-width: 900px; }
+        .title-layout hr {
+            border: none; height: 5px; background: var(--gradient-text);
+            margin: 30px auto; width: 150px; border-radius: 3px;
+        }
+        .title-layout .subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-main); background: rgba(14, 165, 233, 0.1);
+            padding: 15px 30px; border-radius: 15px; display: inline-block;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        /* Títulos de Sección */
+        .section-title-layout { text-align: center; margin: auto; max-width: 900px; }
+        .section-title-layout h2 {
+            font-size: clamp(3rem, 5vw, 4rem);
+            margin-bottom: 20px; background: var(--gradient-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Cuadrículas y Tarjetas */
+        .content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; height: 100%; }
+        .tiled-content { display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap; }
+        
+        .tile {
+            background: #ffffff; border-radius: 16px; padding: 25px 20px; /* Reducido */
+            flex: 1; min-width: 250px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
+        }
+        .tile::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: var(--gradient-text); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+        }
+        .tile:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15); }
+        .tile:hover::before { transform: scaleX(1); }
+        
+        .tile .icon {
+            font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;
+            background: rgba(14, 165, 233, 0.1); width: 70px; height: 70px; line-height: 70px;
+            border-radius: 50%; margin-left: auto; margin-right: auto; transition: transform 0.3s ease;
+        }
+        .tile:hover .icon { transform: scale(1.1) rotate(5deg); }
+
+        /* Columnas */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; } /* Gap reducido */
+        @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } } /* Responsivo */
+        .two-column.align-start { align-items: flex-start; }
+
+        .image-wrapper {
+            border-radius: 16px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            position: relative; height: 100%; min-height: 250px; /* Reducido */
+            display: flex; align-items: center; justify-content: center;
+            background: #e2e8f0; color: #64748b; font-weight: 600;
+        }
+
+        /* Fórmulas matemáticas */
+        .formula-box {
+            background: linear-gradient(145deg, #ffffff, #f0f4f8);
+            padding: 15px; /* Reducido */
+            border-radius: 12px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05), -5px -5px 15px rgba(255,255,255,0.8);
+            border: 1px solid rgba(14, 165, 233, 0.2); text-align: center; margin: 15px 0;
+            display: flex; justify-content: center; align-items: center;
+            font-size: clamp(1.1rem, 2vw, 1.4rem); /* Ajustado y dinámico */
+            transition: transform 0.3s ease;
+            overflow-x: auto; /* Permite scroll horizontal si la fórmula es larguísima */
+        }
+        .formula-box:hover { transform: scale(1.02); border-color: var(--primary); }
+
+        /* Diapositiva con imagen sangrada (Bleed) */
+        .bleed-layout { padding: 0; display: flex; background: var(--dark-bg); color: #f8fafc; }
+        .bleed-layout .content-area { padding: 40px 50px; width: 55%; }
+        .bleed-layout h2.slide-title { color: #ffffff; }
+        .bleed-layout h2.slide-title::after { background: var(--secondary); }
+        .bleed-layout p, .bleed-layout li { color: #cbd5e1; }
+        .bleed-layout h3 { color: var(--secondary); }
+        .bleed-layout .image-container {
+            width: 45%; background: #334155; display: flex; align-items: center;
+            justify-content: center; color: #94a3b8; font-size: 1.2rem; text-align: center; padding: 20px;
+        }
+        @media (max-width: 768px) {
+            .bleed-layout { flex-direction: column; }
+            .bleed-layout .content-area, .bleed-layout .image-container { width: 100%; }
+            .bleed-layout .image-container { min-height: 200px; }
+        }
+
+        /* Listas y viñetas */
+        .feature-list { list-style: none; }
+        .feature-list li {
+            position: relative; padding: 15px 15px 15px 45px; margin-bottom: 15px;
+            background: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-left: 4px solid var(--primary); transition: transform 0.2s ease;
+        }
+        .feature-list li:hover { transform: translateX(8px); }
+        .feature-list i { position: absolute; left: 15px; top: 18px; font-size: 1.2rem; color: var(--primary); }
+
+        /* Botón YouTube */
+        .youtube-btn {
+            display: inline-flex; align-items: center; gap: 12px;
+            background: linear-gradient(135deg, #ff0000, #cc0000); color: white !important;
+            padding: 15px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: 700;
+            text-decoration: none; box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s ease; margin-top: 20px; animation: pulse 2s infinite;
+        }
+        .youtube-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(255, 0, 0, 0.4); }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); } }
+
+    </style>
+</head>
+<body>
+
+<!-- Instrucción de Navegación -->
+<div style="position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); z-index: 100; font-size: 0.85rem; text-align: center; pointer-events: none; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px;">
+    <i class="fa-solid fa-computer-mouse"></i> Scroll o flechas <i class="fa-solid fa-arrows-up-down"></i> para navegar
+</div>
+
+<!-- Slide 1: Portada -->
+<div class="slide-wrapper">
+    <div class="slide-container" style="justify-content: center;">
+        <div class="title-layout">
+            <h1>Ecuación General<br>de Energía</h1>
+            <hr>
+            <div class="subtitle">
+                <strong>Mecánica de Fluidos - Capítulo 8</strong><br>
+                <span style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-top: 8px;">Autor: Juan Andrés Sandoval Herrera<br>Fundación Universidad de América</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 2: Introducción -->
+<div class="slide-wrapper">
+    <div class="slide-container">
+        <div class="section-title-layout">
+            <h2>Introducción al Balance</h2>
+            <div class="formula-box" style="margin: 20px auto; max-width: 800px; background: transparent; border: none; box-shadow: none;">
+                <p style="font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--text-muted); text-align: center;">
+                    Ampliación del principio de Bernoulli a la realidad del flujo de fluidos. La ecuación general de la energía considera la fricción inherente, la presencia de accesorios y la transferencia de energía mecánica mediante bombas y turbinas.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Formas de Energía -->
+<div class="slide-wrapper">
+    <div class="slide-container">
+        <h2 class="slide-title">Formas de Energía del Fluido</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-tachometer-fast"></i></div>
+                    <h3>Energía Cinética</h3>
+                    <p>Relacionada con la velocidad del fluido. Su representación como carga dinámica es la energía sobre la unidad de peso.</p>
+                    <div class="formula-box">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML">
+                            <mfrac><msup><mi>v</mi><mn>2</mn></msup><mrow><mn>2</mn><mi>g</mi></mrow></mfrac>
+                        </math>
+                    </div>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-arrows-up-down"></i></div>
+                    <h3>Energía Potencial</h3>
+                    <p>Equivalente a la energía gravitacional. Representa la elevación del punto transversal respecto a una referencia.</p>
+                    <div class="formula-box">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>z</mi></math>
+                    </div>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-compress-arrows-alt"></i></div>
+                    <h3>Energía de Flujo</h3>
+                    <p>Es la presión del fluido a la altura considerada. Genera una carga de presión o flujo en el sistema.</p>
+                    <div class="formula-box">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML">
+                            <mfrac><mi>p</mi><mi>&#947;</mi></mfrac>
+                        </math>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Transferencia y Pérdidas -->
+<div class="slide-wrapper">
+    <div class="slide-container">
+        <h2 class="slide-title">Transferencia y Pérdidas Reales</h2>
+        <div class="content-area">
+            <div class="two-column align-start">
+                <div>
+                    <p style="margin-bottom: 20px;">El flujo en sistemas reales experimenta intercambios de energía que afectan su capacidad de transporte:</p>
+                    <ul class="feature-list">
+                        <li>
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <strong>Energía agregada:</strong> Trabajo mecánico hacia el fluido, típicamente mediante bombas.
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-minus-circle"></i>
+                            <strong>Energía retirada:</strong> Trabajo extraído del fluido mediante motores o turbinas.
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-arrow-trend-down"></i>
+                            <strong>Pérdidas de energía:</strong> Disipación originada por fricción (primarias) y el uso de válvulas o accesorios (secundarias).
+                        </li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Ecuación General Matemática -->
+<div class="slide-wrapper">
+    <div class="slide-container">
+        <h2 class="slide-title">Expresión Matemática General</h2>
+        <div class="content-area">
+            <div class="two-column" style="gap: 20px;">
+                <div style="background: #ffffff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--primary);">
+                    <h3 style="text-align: center;">Ecuación General (en Carga)</h3>
+                    <div class="formula-box" style="background: transparent; box-shadow: none; border: none; padding: 5px;">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                            <mfrac><msub><mi>p</mi><mn>1</mn></msub><mi>&#947;</mi></mfrac>
+                            <mo>+</mo>
+                            <mfrac><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup><mrow><mn>2</mn><mi>g</mi></mrow></mfrac>
+                            <mo>+</mo>
+                            <msub><mi>z</mi><mn>1</mn></msub>
+                            <mo>+</mo>
+                            <msub><mi>h</mi><mi>a</mi></msub>
+                            <mo>-</mo>
+                            <msub><mi>h</mi><mi>r</mi></msub>
+                            <mo>-</mo>
+                            <msub><mi>h</mi><mi>L</mi></msub>
+                            <mo>=</mo>
+                            <mfrac><msub><mi>p</mi><mn>2</mn></msub><mi>&#947;</mi></mfrac>
+                            <mo>+</mo>
+                            <mfrac><msubsup><mi>v</mi><mn>2</mn><mn>2</mn></msubsup><mrow><mn>2</mn><mi>g</mi></mrow></mfrac>
+                            <mo>+</mo>
+                            <msub><mi>z</mi><mn>2</mn></msub>
+                        </math>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-book-open" style="color: var(--primary); margin-right: 10px;"></i> Nomenclatura</h3>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-map-pin"></i><strong>1 y 2:</strong> Secciones de flujo inicial y final.</li>
+                        <li><i class="fa-solid fa-arrow-up"></i><strong>h<sub>a</sub>:</strong> Carga añadida por bombas.</li>
+                        <li><i class="fa-solid fa-arrow-down"></i><strong>h<sub>r</sub>:</strong> Carga extraída por turbinas.</li>
+                        <li><i class="fa-solid fa-fire-flame-curved"></i><strong>h<sub>L</sub>:</strong> Pérdidas de carga totales en el trayecto.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Ejemplo (Bleed Layout) -->
+<div class="slide-wrapper">
+    <div class="slide-container bleed-layout">
+        <div class="content-area">
+            <h2 class="slide-title">Ejemplo: Descarga de Tanque</h2>
+            <br>
+            <h3>Planteamiento del Problema</h3>
+            <p>Se cuenta con un tanque sellado que contiene agua con una presión manométrica aplicada de <strong>140 kPa</strong> sobre el líquido.</p>
+            <p>El nivel del agua se sitúa a <strong>2.4 m</strong> de altura con respecto a la salida.</p>
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-left: 4px solid var(--secondary); border-radius: 0 10px 10px 0; margin-top: 15px;">
+                <p style="color: #ffffff; margin: 0; font-weight: 600;">Encuentre el flujo volumétrico real que sale por una boquilla de descarga de 50 mm de diámetro, considerando una pérdida de energía de 2 m.</p>
+            </div>
+        </div>
+        <div class="image-container">
+            
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Solución Paso a Paso -->
+<div class="slide-wrapper">
+    <div class="slide-container">
+        <h2 class="slide-title">Solución Analítica</h2>
+        <div class="content-area">
+            <div class="two-column align-start">
+                <div>
+                    <h3>1. Suposiciones</h3>
+                    <p>Puntos: Superficie (A) y salida de la boquilla (B). La velocidad en A es mínima y la presión en B es atmosférica (0 kPa manométrica).</p>
+                    <div class="formula-box" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>v</mi><mi>A</mi></msub><mo>&#8776;</mo><mn>0</mn><mo>&#160;</mo><mtext>m/s</mtext></math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mi>B</mi></msub><mo>=</mo><mn>0</mn><mo>&#160;</mo><mtext>kPa</mtext></math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" style="margin-top: 10px; color: var(--primary-dark);">
+                            <mfrac><msub><mi>p</mi><mi>A</mi></msub><mi>&#947;</mi></mfrac><mo>+</mo><msub><mi>z</mi><mi>A</mi></msub><mo>-</mo><msub><mi>h</mi><mi>L</mi></msub><mo>=</mo><mfrac><msubsup><mi>v</mi><mi>B</mi><mn>2</mn></msubsup><mrow><mn>2</mn><mi>g</mi></mrow></mfrac>
+                        </math>
+                    </div>
+                </div>
+                <div>
+                    <h3>2. Despeje y Cálculo</h3>
+                    <p>Sustituyendo valores (<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>&#947;</mi><mo>=</mo><mn>9.81</mn><mtext> kN/m³</mtext></math>):</p>
+                    <div class="formula-box" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML">
+                            <mfrac><mn>140</mn><mn>9.81</mn></mfrac><mo>+</mo><mn>2.4</mn><mo>-</mo><mn>2.0</mn><mo>=</mo><mfrac><msubsup><mi>v</mi><mi>B</mi><mn>2</mn></msubsup><mn>19.6</mn></mfrac>
+                        </math>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" style="font-weight: bold;">
+                            <msub><mi>v</mi><mi>B</mi></msub><mo>=</mo><mn>16.97</mn><mo>&#160;</mo><mtext>m/s</mtext>
+                        </math>
+                        <div style="width: 100%; height: 1px; background: rgba(0,0,0,0.1); margin: 3px 0;"></div>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" style="color: var(--primary-dark); font-weight: bold;">
+                            <msub><mi>Q</mi><mtext>real</mtext></msub><mo>=</mo><mn>0.0333</mn><mo>&#160;</mo><msup><mtext>m</mtext><mn>3</mn></msup><mtext>/s</mtext>
+                        </math>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Despedida y Enlaces -->
+<div class="slide-wrapper">
+    <div class="slide-container" style="text-align: center; justify-content: center;">
+        <h2 style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 20px; color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;">Sigue Aprendiendo</h2>
+        <p style="font-size: clamp(1.1rem, 2vw, 1.3rem); max-width: 700px; margin: 0 auto 30px;">Domina la Ecuación General de Energía y la resolución de problemas avanzados revisando la lista de reproducción completa.</p>
+        
+        <a href="https://youtube.com/playlist?list=PLwIovOH78wWn8GhIk5NEdafIRXXW5Nlni&si=fHVZ8_UYlhydriRU" target="_blank" class="youtube-btn">
+            <i class="fa-brands fa-youtube"></i> Ver Playlist de Fluidos
+        </a>
+
+        <div style="margin-top: 40px; padding: 15px 25px; background: rgba(14, 165, 233, 0.05); border-radius: 12px; display: inline-block;">
+            <p style="margin: 0; font-weight: 600; color: var(--text-main);">
+                <i class="fa-solid fa-book" style="color: var(--primary); margin-right: 10px;"></i>
+                Libro Base: "Mecánica de fluidos" - Juan Andrés Sandoval Herrera
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Script para permitir navegación con teclado -->
+<script>
+    document.addEventListener('keydown', (e) => {
+        const viewportHeight = window.innerHeight;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            window.scrollBy({ top: viewportHeight, behavior: 'smooth' });
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            window.scrollBy({ top: -viewportHeight, behavior: 'smooth' });
+        }
+    });
+</script>
+
+</body>
+</html>
