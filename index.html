@@ -90,7 +90,7 @@
             max-height: 92vh;
             width: 95vw;
             max-width: 1200px;
-            padding: 40px 50px; /* Padding reducido */
+            padding: 40px 50px;
             position: relative;
             z-index: 1;
             overflow-y: auto; /* Scroll interno seguro si la pantalla es muy pequeña */
@@ -106,7 +106,7 @@
         h1, h2, h3 { font-family: 'Outfit', sans-serif; color: #0f172a; }
 
         h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem); /* Tamaño dinámico ajustado */
+            font-size: clamp(2.2rem, 6vw, 4rem);
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 20px;
@@ -117,7 +117,7 @@
         }
 
         .slide-title {
-            font-size: clamp(2rem, 4vw, 2.6rem); /* Reducido */
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
             font-weight: 700;
             margin-bottom: 25px;
             position: relative;
@@ -130,15 +130,15 @@
         }
 
         h3 {
-            font-size: clamp(1.3rem, 2vw, 1.5rem);
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
             font-weight: 600;
             color: var(--primary-dark);
             margin-bottom: 12px;
         }
 
         p, li {
-            font-size: clamp(0.95rem, 1.5vw, 1.1rem); /* Reducido para evitar montajes */
-            line-height: 1.5; /* Interlineado más compacto pero legible */
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            line-height: 1.5;
             color: var(--text-muted);
             margin-bottom: 12px;
         }
@@ -152,7 +152,7 @@
             margin: 30px auto; width: 150px; border-radius: 3px;
         }
         .title-layout .subtitle {
-            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
             color: var(--text-main); background: rgba(14, 165, 233, 0.1);
             padding: 15px 30px; border-radius: 15px; display: inline-block;
             border: 1px solid rgba(14, 165, 233, 0.2);
@@ -161,7 +161,7 @@
         /* Títulos de Sección */
         .section-title-layout { text-align: center; margin: auto; max-width: 900px; }
         .section-title-layout h2 {
-            font-size: clamp(3rem, 5vw, 4rem);
+            font-size: clamp(2.5rem, 6vw, 4rem);
             margin-bottom: 20px; background: var(--gradient-text);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -171,7 +171,7 @@
         .tiled-content { display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap; }
         
         .tile {
-            background: #ffffff; border-radius: 16px; padding: 25px 20px; /* Reducido */
+            background: #ffffff; border-radius: 16px; padding: 25px 20px;
             flex: 1; min-width: 250px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -192,13 +192,12 @@
         .tile:hover .icon { transform: scale(1.1) rotate(5deg); }
 
         /* Columnas */
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; } /* Gap reducido */
-        @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } } /* Responsivo */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
         .two-column.align-start { align-items: flex-start; }
 
         .image-wrapper {
             border-radius: 16px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-            position: relative; height: 100%; min-height: 250px; /* Reducido */
+            position: relative; height: 100%; min-height: 250px;
             display: flex; align-items: center; justify-content: center;
             background: #e2e8f0; color: #64748b; font-weight: 600;
         }
@@ -206,32 +205,27 @@
         /* Fórmulas matemáticas */
         .formula-box {
             background: linear-gradient(145deg, #ffffff, #f0f4f8);
-            padding: 15px; /* Reducido */
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.05), -5px -5px 15px rgba(255,255,255,0.8);
             border: 1px solid rgba(14, 165, 233, 0.2); text-align: center; margin: 15px 0;
             display: flex; justify-content: center; align-items: center;
-            font-size: clamp(1.1rem, 2vw, 1.4rem); /* Ajustado y dinámico */
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
             transition: transform 0.3s ease;
-            overflow-x: auto; /* Permite scroll horizontal si la fórmula es larguísima */
+            overflow-x: auto;
         }
         .formula-box:hover { transform: scale(1.02); border-color: var(--primary); }
 
         /* Diapositiva con imagen sangrada (Bleed) */
-        .bleed-layout { padding: 0; display: flex; background: var(--dark-bg); color: #f8fafc; }
-        .bleed-layout .content-area { padding: 40px 50px; width: 55%; }
+        .bleed-layout { padding: 0; display: flex; background: var(--dark-bg); color: #f8fafc; overflow: hidden; }
+        .bleed-layout .content-area { padding: 40px 50px; width: 55%; display: flex; flex-direction: column; justify-content: center; }
         .bleed-layout h2.slide-title { color: #ffffff; }
         .bleed-layout h2.slide-title::after { background: var(--secondary); }
         .bleed-layout p, .bleed-layout li { color: #cbd5e1; }
         .bleed-layout h3 { color: var(--secondary); }
         .bleed-layout .image-container {
             width: 45%; background: #334155; display: flex; align-items: center;
-            justify-content: center; color: #94a3b8; font-size: 1.2rem; text-align: center; padding: 20px;
-        }
-        @media (max-width: 768px) {
-            .bleed-layout { flex-direction: column; }
-            .bleed-layout .content-area, .bleed-layout .image-container { width: 100%; }
-            .bleed-layout .image-container { min-height: 200px; }
+            justify-content: center; color: #94a3b8; font-size: 1.2rem; text-align: center; padding: 20px; min-height: 100%;
         }
 
         /* Listas y viñetas */
@@ -246,7 +240,7 @@
 
         /* Botón YouTube */
         .youtube-btn {
-            display: inline-flex; align-items: center; gap: 12px;
+            display: inline-flex; align-items: center; gap: 12px; justify-content: center;
             background: linear-gradient(135deg, #ff0000, #cc0000); color: white !important;
             padding: 15px 30px; border-radius: 50px; font-size: 1.1rem; font-weight: 700;
             text-decoration: none; box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
@@ -255,13 +249,54 @@
         .youtube-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(255, 0, 0, 0.4); }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); } }
 
+        /* --- 5. ADAPTACIÓN A DISPOSITIVOS MÓVILES (MEDIA QUERIES) --- */
+        @media (max-width: 768px) {
+            .slide-wrapper { padding: 5px; }
+            .slide-container { padding: 25px 20px; border-radius: 16px; width: 100%; max-height: 96vh; }
+            
+            .two-column { grid-template-columns: 1fr; gap: 15px; }
+            .tiled-content { flex-direction: column; gap: 15px; }
+            .tile { min-width: 100%; padding: 15px; margin-bottom: 0; }
+            .tile .icon { width: 50px; height: 50px; line-height: 50px; font-size: 1.8rem; margin-bottom: 10px; }
+            
+            .bleed-layout { flex-direction: column; overflow-y: auto; }
+            .bleed-layout .content-area { width: 100%; padding: 25px 20px; }
+            .bleed-layout .image-container { width: 100%; min-height: 200px; padding: 0; }
+            
+            .feature-list li { padding: 12px 12px 12px 35px; margin-bottom: 10px; }
+            .feature-list i { left: 10px; top: 14px; font-size: 1rem; }
+            
+            .formula-box { padding: 10px; margin: 10px 0; }
+            
+            .youtube-btn { width: 100%; font-size: 1rem; padding: 12px 20px; }
+            .title-layout .subtitle { padding: 10px 15px; }
+        }
+
+        /* Instrucciones flotantes inferiores */
+        .nav-instruction {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.8); z-index: 100; font-size: 0.85rem; text-align: center;
+            pointer-events: none; background: rgba(0,0,0,0.5); padding: 6px 16px;
+            border-radius: 20px; backdrop-filter: blur(4px); white-space: nowrap;
+        }
+        @media (max-width: 768px) {
+            .nav-instruction { font-size: 0.75rem; padding: 5px 12px; bottom: 10px; }
+            .nav-instruction-desktop { display: none; }
+            .nav-instruction-mobile { display: inline; }
+        }
+        @media (min-width: 769px) {
+            .nav-instruction-desktop { display: inline; }
+            .nav-instruction-mobile { display: none; }
+        }
+
     </style>
 </head>
 <body>
 
 <!-- Instrucción de Navegación -->
-<div style="position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); z-index: 100; font-size: 0.85rem; text-align: center; pointer-events: none; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px;">
-    <i class="fa-solid fa-computer-mouse"></i> Scroll o flechas <i class="fa-solid fa-arrows-up-down"></i> para navegar
+<div class="nav-instruction">
+    <span class="nav-instruction-desktop"><i class="fa-solid fa-computer-mouse"></i> Scroll o flechas <i class="fa-solid fa-arrows-up-down"></i> para navegar</span>
+    <span class="nav-instruction-mobile"><i class="fa-solid fa-hand-pointer"></i> Desliza hacia abajo para navegar</span>
 </div>
 
 <!-- Slide 1: Portada -->
@@ -284,7 +319,7 @@
         <div class="section-title-layout">
             <h2>Introducción al Balance</h2>
             <div class="formula-box" style="margin: 20px auto; max-width: 800px; background: transparent; border: none; box-shadow: none;">
-                <p style="font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--text-muted); text-align: center;">
+                <p style="font-size: clamp(1rem, 3.5vw, 1.3rem); color: var(--text-muted); text-align: center;">
                     Ampliación del principio de Bernoulli a la realidad del flujo de fluidos. La ecuación general de la energía considera la fricción inherente, la presencia de accesorios y la transferencia de energía mecánica mediante bombas y turbinas.
                 </p>
             </div>
@@ -466,15 +501,15 @@
 <!-- Slide 8: Despedida y Enlaces -->
 <div class="slide-wrapper">
     <div class="slide-container" style="text-align: center; justify-content: center;">
-        <h2 style="font-size: clamp(2.5rem, 4vw, 3.5rem); margin-bottom: 20px; color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;">Sigue Aprendiendo</h2>
-        <p style="font-size: clamp(1.1rem, 2vw, 1.3rem); max-width: 700px; margin: 0 auto 30px;">Domina la Ecuación General de Energía y la resolución de problemas avanzados revisando la lista de reproducción completa.</p>
+        <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px; color: #0f172a; font-family: 'Outfit', sans-serif; font-weight: 800;">Sigue Aprendiendo</h2>
+        <p style="font-size: clamp(1rem, 3vw, 1.3rem); max-width: 700px; margin: 0 auto 30px;">Domina la Ecuación General de Energía y la resolución de problemas avanzados revisando la lista de reproducción completa.</p>
         
         <a href="https://youtube.com/playlist?list=PLwIovOH78wWn8GhIk5NEdafIRXXW5Nlni&si=fHVZ8_UYlhydriRU" target="_blank" class="youtube-btn">
             <i class="fa-brands fa-youtube"></i> Ver Playlist de Fluidos
         </a>
 
         <div style="margin-top: 40px; padding: 15px 25px; background: rgba(14, 165, 233, 0.05); border-radius: 12px; display: inline-block;">
-            <p style="margin: 0; font-weight: 600; color: var(--text-main);">
+            <p style="margin: 0; font-weight: 600; color: var(--text-main); font-size: clamp(0.9rem, 2.5vw, 1.1rem);">
                 <i class="fa-solid fa-book" style="color: var(--primary); margin-right: 10px;"></i>
                 Libro Base: "Mecánica de fluidos" - Juan Andrés Sandoval Herrera
             </p>
